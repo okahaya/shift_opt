@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シフト作成結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>シフト作成結果</h1>
+    <button onclick="showByShift()">シフト別表示</button>
+    <button onclick="showByWorker()">担当者別表示</button>
+    <div id="byShift" class="view">
+        {% for i, job in enumerate(schedule_result) %}
+            <h2>{{ jobs[i] }}</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>時間枠</th>
+                        <th>担当者</th>
+                    </tr>
+                </thead>
+                <tbody class="sortable" data-group="{{ i }}">
+                    {% for j, time_slot in enumerate(job) %}
+                        <tr data-job="{{ i }}" data-timeslot="{{ j }}">
+                            <td>{{ minutes_to_time(time_schedules[i][j][0]) }} - {{ minutes_to_time(time_schedules[i][j][1]) }}</td>
+                            <td>
+                                <ul class="sortable" data-job="{{ i }}" data-timeslot="{{ j }}">
+                                    {% for worker in time_slot %}
+                                        <li>{{ worker }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+    <div id="byWorker" class="view hidden">
+        {% for worker, shifts in worker_dict.items() %}
+            <h2>{{ worker }}</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>シフト名</th>
+                        <th>時間枠</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shift in shifts %}
+                        <tr>
+                            <td>{{ shift[0] }}</td>
+                            <td>{{ shift[1] }} - {{ shift[2] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+    <form method="get" action="/owner">
+        <button type="submit">戻る</button>
+    </form>
+    <button onclick="resetEdits()">リセット</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const sortableElems = document.querySelectorAll('.sortable');
+            sortableElems.forEach(sortable => {
+                new Sortable(sortable, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    group: 'shared'
+                });
+            });
+        });
+
+        function showByShift() {
+            document.getElementById('byShift').classList.remove('hidden');
+            document.getElementById('byWorker').classList.add('hidden');
+        }
+
+        function showByWorker() {
+            document.getElementById('byShift').classList.add('hidden');
+            document.getElementById('byWorker').classList.remove('hidden');
+        }
+
+        
+
+        function resetEdits() {
+            fetch('/reset_edits', {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('リセットに失敗しました');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ロール選択</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ロール選択</h1>
+    <form method="post" action="/role_selection">
+        <label for="role">ロールを選択してください:</label>
+        <select id="role" name="role" required>
+            {% for role in roles %}
+                <option value="{{ role }}">{{ 'オーナー' if role == 'owner' else 'ワーカー' }}</option>
+            {% endfor %}
+        </select><br>
+        <button type="submit">選択</button>
+    </form>
+</body>
+</html>

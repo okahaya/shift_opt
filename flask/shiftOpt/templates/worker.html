@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ワーカー画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function addTimeField() {
+            var container = document.getElementById('time-fields');
+            var div = document.createElement('div');
+            div.innerHTML = `
+                <div style="display:flex;">
+                    <div>
+                        <label for="start_time">開始時間 (X:YY, XX:YY):</label>
+                        <input type="text" name="start_time" required>
+                    </div>
+                    <div>
+                        <label for="end_time">終了時間 (X:YY, XX:YY):</label>
+                        <input type="text" name="end_time" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    </script>
+</head>
+<body>
+    <h1>ワーカー画面</h1>
+    <form method="post" action="/worker">
+        <div id="time-fields">
+            <div style="display:flex;">
+                <div>
+                    <label for="start_time">開始時間 (X:YY, XX:YY):</label>
+                    <input type="text" name="start_time" required>
+                </div>
+                <div>
+                    <label for="end_time">終了時間 (X:YY, XX:YY):</label>
+                    <input type="text" name="end_time" required>
+                </div>
+            </div>
+        </div>
+        <button type="button" onclick="addTimeField()">時間枠を追加</button>
+        <button type="submit">登録</button>
+    </form>
+
+    <h2>現在登録されている都合の悪い時間</h2>
+    <ul>
+        {% for start, end in user_unavailable_times %}
+            <li>{{ minutes_to_time(start) }} - {{ minutes_to_time(end) }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="get" action="/dashboard">
+        <button type="submit">ダッシュボードに戻る</button>
+    </form>
+
+    <form method="get" action="/logout">
+        <button type="submit">ログアウト</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
+    {% endif %}
+</body>
+</html>

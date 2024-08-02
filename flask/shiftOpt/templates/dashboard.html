@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ダッシュボード</h1>
+    <form method="get" action="/create_event">
+        <button type="submit">イベントの作成</button>
+    </form>
+    <form method="get" action="/join_event">
+        <button type="submit">イベントへの参加</button>
+    </form>
+    <h2>オーナーとして参加するイベント</h2>
+    {% if owned_events %}
+        <ul>
+            {% for event in owned_events %}
+                <li>
+                    <a href="{{ url_for('join_event_as_owner', event_id=event[0]) }}">{{ event[1] }}</a>
+                    <form method="post" action="{{ url_for('delete_event', event_id=event[0]) }}" style="display:inline;">
+                        <button type="submit">削除</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>オーナーとして参加するイベントはありません。</p>
+    {% endif %}
+    
+    <h2>サンプルデータを挿入</h2>
+    <form method="post" action="/insert_sample_data">
+        <label for="event_name">イベント名:</label>
+        <input type="text" id="event_name" name="event_name" required>
+        <button type="submit">サンプルデータを挿入</button>
+    </form>
+    
+    
+    <form method="get" action="/logout">
+        <button type="submit">ログアウト</button>
+    </form>
+</body>
+</html>
