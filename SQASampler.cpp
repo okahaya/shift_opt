@@ -101,7 +101,7 @@ int main() {
             }
         }
     }
-
+    cout << "Hello World" << endl;
     pair<vector<int>, double> result = quantum_annealing(L, N, Q, T, mc_steps, anneal_steps);
 
     cout << "Best bits: ";
