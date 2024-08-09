@@ -85,7 +85,6 @@ pair<vector<int>, double> quantum_annealing(int L, int N, const vector<vector<do
 int main() {
     int mc_steps = 100;  // Number of Monte Carlo steps
     int anneal_steps = 100;  // Number of annealing steps
-
     int L = 3;  // Number of layers
     int N = 10; // Number of bits in each layer
     double T = 1.0;
